@@ -10,8 +10,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.primefaces.event.RowEditEvent;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.sveri.eiwomisa.model.Task;
 
@@ -21,6 +24,7 @@ import de.sveri.eiwomisa.model.Task;
 // "/pages/tasks/tasks.xhtml")
 @ManagedBean
 @ViewScoped
+@Transactional
 public class TaskBean implements Serializable {
 
 	private static final long serialVersionUID = -5686600179121754166L;
@@ -41,12 +45,26 @@ public class TaskBean implements Serializable {
 
 	private String fromDate;
 
+	@PersistenceContext
+	protected EntityManager em;
+
 	public TaskBean() {
 		tasks = new ArrayList<Task>();
 		Task test = new Task();
 		test.setName("testName");
 
 		tasks.add(test);
+
+		doIt();
+
+	}
+
+	@Transactional
+	private void doIt() {
+
+		Task t = new Task();
+		t.setName("test");
+		em.merge(t);
 
 	}
 
